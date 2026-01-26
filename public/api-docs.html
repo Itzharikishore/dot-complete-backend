@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOT Therapy API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .info-box {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .endpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .endpoint-card {
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .endpoint-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .endpoint-header {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+        
+        .endpoint-body {
+            padding: 15px;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .method.post {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .method.get {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .method.put {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .method.delete {
+            background: #f44336;
+            color: white;
+        }
+        
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 3px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        
+        .code-section {
+            background: white;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        pre {
+            background: #2b2b2b;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 DOT Therapy API</h1>
+        <p>Comprehensive REST API for Occupational Therapy Platform</p>
+    </div>
+    
+    <div class="container">
+        <div class="info-box">
+            <h3>📋 API Overview</h3>
+            <p><strong>Base URL:</strong> <code>http://localhost:5000</code></p>
+            <p><strong>Authentication:</strong> Cookie-based JWT (httpOnly) or Bearer token</p>
+            <p><strong>Default Superuser:</strong> admin@admin.com / admin123</p>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔐 Authentication</h3>
+            <p>Requests can be authenticated using either:</p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Cookie-based JWT:</strong> Automatically set after login, included in httpOnly cookies</li>
+                <li><strong>Bearer Token:</strong> Include in Authorization header: <code>Authorization: Bearer &lt;token&gt;</code></li>
+            </ol>
+        </div>
+        
+        <div class="info-box">
+            <h3>📁 Route Structure</h3>
+            <div style="margin-top: 10px; font-family: monospace;">
+                <div>/api/auth - Authentication endpoints (register, login, password reset)</div>
+                <div>/api/child - Child-role endpoints (profiles, activities, progress)</div>
+                <div>/api/therapist - Therapist-role endpoints (child management, assignments)</div>
+                <div>/api/admin - Superuser-only endpoints (system management)</div>
+            </div>
+        </div>
+        
+        <div class="code-section">
+            <h3>🧪 Testing with curl</h3>
+            <h4>1. Register User</h4>
+            <pre>curl -X POST http://localhost:5000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "Password@123",
+    "role": "child"
+  }'</pre>
+            
+            <h4>2. Login</h4>
+            <pre>curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "Password@123"
+  }'</pre>
+            
+            <h4>3. Get Profile (with Bearer token)</h4>
+            <pre>curl -X GET http://localhost:5000/api/auth/profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</pre>
+            
+            <h4>4. Create Child (Therapist)</h4>
+            <pre>curl -X POST http://localhost:5000/api/therapist/children \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -d '{
+    "firstName": "Emma",
+    "lastName": "Smith",
+    "dateOfBirth": "2015-06-15"
+  }'</pre>
+        </div>
+        
+        <div class="code-section">
+            <h3>🔑 Key Endpoints</h3>
+            
+            <h4>Authentication Routes</h4>
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/auth/register</div>
+                <div class="endpoint-body">
+                    <p>Register a new user</p>
+                    <p><strong>Required Fields:</strong> name, email, password, role</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/auth/login</div>
+                <div class="endpoint-body">
+                    <p>Login and receive authentication token</p>
+                    <p><strong>Required Fields:</strong> email, password</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">GET /api/auth/profile</div>
+                <div class="endpoint-body">
+                    <p>Get current user profile</p>
+                    <p><strong>Auth Required:</strong> Yes</p>
+                </div>
+            </div>
+            
+            <h4 style="margin-top: 30px;">Child Routes</h4>
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/child/children</div>
+                <div class="endpoint-body">
+                    <p>Create a child profile</p>
+                    <p><strong>Auth Required:</strong> Yes</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">GET /api/child/children</div>
+                <div class="endpoint-body">
+                    <p>Get all children</p>
+                    <p><strong>Auth Required:</strong> Yes</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/child/progress</div>
+                <div class="endpoint-body">
+                    <p>Record progress for an activity</p>
+                    <p><strong>Auth Required:</strong> Yes</p>
+                </div>
+            </div>
+            
+            <h4 style="margin-top: 30px;">Therapist Routes</h4>
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/therapist/activities</div>
+                <div class="endpoint-body">
+                    <p>Create an activity</p>
+                    <p><strong>Auth Required:</strong> Yes (therapist role)</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/therapist/activity-assignments</div>
+                <div class="endpoint-body">
+                    <p>Assign activity to a child</p>
+                    <p><strong>Auth Required:</strong> Yes (therapist role)</p>
+                </div>
+            </div>
+            
+            <h4 style="margin-top: 30px;">Admin Routes</h4>
+            <div class="endpoint-card">
+                <div class="endpoint-header">GET /api/admin/therapists</div>
+                <div class="endpoint-body">
+                    <p>List all therapists</p>
+                    <p><strong>Auth Required:</strong> Yes (superuser only)</p>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">POST /api/admin/therapists</div>
+                <div class="endpoint-body">
+                    <p>Create a new therapist</p>
+                    <p><strong>Auth Required:</strong> Yes (superuser only)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>🛠️ Response Format</h3>
+            <p><strong>Success Response (200/201):</strong></p>
+            <pre style="margin-top: 10px; background: #f5f5f5; padding: 10px; border-radius: 3px;">{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": { /* response data */ }
+}</pre>
+            
+            <p style="margin-top: 15px;"><strong>Error Response (400/401/403/500):</strong></p>
+            <pre style="margin-top: 10px; background: #f5f5f5; padding: 10px; border-radius: 3px;">{
+  "success": false,
+  "message": "Error description",
+  "error": "detailed error info"
+}</pre>
+        </div>
+        
+        <div class="info-box">
+            <h3>💾 Using Postman</h3>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Create a new request</li>
+                <li>Set method (GET, POST, PUT, DELETE)</li>
+                <li>Enter endpoint URL (e.g., http://localhost:5000/api/auth/login)</li>
+                <li>Go to "Body" tab and select "raw" with "JSON" format</li>
+                <li>Paste the JSON payload</li>
+                <li>Click "Send"</li>
+                <li>Copy the received token and use in subsequent requests with Bearer token</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>DOT Therapy Backend API Documentation • v1.0.0</p>
+        <p>All endpoints are fully functional and operational</p>
+    </div>
+</body>
+</html>
